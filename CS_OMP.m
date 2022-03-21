@@ -1,0 +1,22 @@
+function[theta]=CS_OMP(y,D,T,sigmaN)
+[M,N]=size(D);
+theta=zeros(N,1);
+It=zeros(M,T);
+Pos_theta=zeros(1,T);
+r_n_0=2*y;
+r_n=y;
+t=1;
+delta=0.1*sigmaN;
+while ((norm(r_n,2))^2-(norm(r_n_0,2))^2<(-delta) && t<=T)
+    product=D'*r_n;
+    [val,pos]=max(abs(product));
+    It(:,t)=D(:,pos);
+    Pos_theta(t)=pos;
+    theta_ls=((It(:,1:t).')*It(:,1:t))^(-1)*(It(:,1:t).')*y;
+    r_n_0=r_n;
+    r_n=y-It(:,1:t)*theta_ls;
+    t=t+1;
+end
+POS=Pos_theta(find(Pos_theta));
+theta(POS)=theta_ls;
+end
